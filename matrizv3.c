@@ -15,14 +15,14 @@ int malocar(mymatriz *matrix) {
 	newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix) {
 		printf("ERROR: Out of memory\n");
-		return NULL;
+		return 0;
 	}
 
-  	for (int i =0; i < matrix->lin; i++) {
-			newMatrix[i] = (int *) malloc(sizeof(int)*matrix->col);
+  	for (int lin =0; lin < matrix->lin; lin++) {
+			newMatrix[lin] = (int *) malloc(sizeof(int)*matrix->col);
 			if (!newMatrix) {
 				printf("ERROR: Out of memory\n");
-				return NULL;
+				return 0;
 			}
 	}
     matrix->matriz = newMatrix;
@@ -52,15 +52,15 @@ int mgerar(mymatriz *matrix, int valor){
     Desta forma, a cada execução o valor da "semente" será diferente.
     ref: http://linguagemc.com.br/valores-aleatorios-em-c-com-a-funcao-rand/
     */
-	srand(time(NULL));
+	srand(wtime(NULL));
 
 	// Percorre todas as linhas da matriz
-	for (int lin=0; lin < matrix->lin; nCntLin++) {
+	for (int lin=0; lin < matrix->lin; lin++) {
 		// Percorre todas as Colunas da Matriz
 		for (int col=0; col < matrix->col; col++) {
 
 			// Verifica o valor passado por parâmetro
-			switch (nValor)
+			switch (valor)
 			{
 				case -9999: // Menor ideia do que pode ser este valor negativo
 					value = rand() % 100;
@@ -111,6 +111,7 @@ int mimprimir(mymatriz *matrix){
 		}
 		printf("\n");
 	}
+	printf("\n\n");
 	return 0;
 }
 
@@ -136,14 +137,14 @@ int mliberar (mymatriz *matrix) {
 	// Só necessita liberar Matrizes alocadas
 	if (matrix->matriz) {
 		// Libera as posições de cada Linha
-		for (int lin =0; lin < matrix->lin; i++)
+		for (int lin =0; lin < matrix->lin; lin++)
 			free(matrix->matriz[lin]);
 
 		// Libera a Matriz completa
 		free(matrix->matriz);
 	}
 
-	return NULL;
+	return 1;
 }
 
 /*
