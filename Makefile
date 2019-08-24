@@ -33,8 +33,7 @@ help:
 	@echo
 	@echo "####### Exemplo de Execução #######"
 	@echo "./main "
-
-#@echo "./mainEx01 mat_a3x4.example mat_b4x3.example"
+	@echo "./mainEx01 mat_a3x4.example mat_b4x3.example"
 
 clean:
 	rm -f *.o *~ $(TARGET) *.map *.result
