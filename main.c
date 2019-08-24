@@ -5,13 +5,12 @@
 #include <string.h>
 #include "matrizv3.h"
 
-// gcc -Wall -g main.c -o main.exe
-// ./test.c -o main.exe
-// gcc -Wall -O3  main.o toolsv3.o main.c -o main 
-
 int main(int argc, char *argv[]) {
     mymatriz mat_a;
     
+    mat_a.lin = N;
+    mat_a.col = M;
+
     if (!malocar(&mat_a))
     {
         printf("Error..\n");
