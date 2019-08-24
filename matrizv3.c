@@ -12,21 +12,22 @@ Realiza a alocação dos espaços de memória
 int malocar(mymatriz *matrix) {
     int **newMatrix = NULL;
 
+	printf("\nmalocar =[%d,%d]\n",matrix->lin, matrix->col);
 	newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix) {
-		printf("ERROR: Out of memory\n");
-		return 0;
+		printf("ERROR: Out of memory 1\n");
+		return 1;
 	}
 
   	for (int lin =0; lin < matrix->lin; lin++) {
 			newMatrix[lin] = (int *) malloc(sizeof(int)*matrix->col);
 			if (!newMatrix) {
-				printf("ERROR: Out of memory\n");
-				return 0;
+				printf("ERROR: Out of memory 2\n");
+				return 1;
 			}
 	}
     matrix->matriz = newMatrix;
-	return 1;
+	return 0;
 }
 
 /*
@@ -144,19 +145,11 @@ int mliberar (mymatriz *matrix) {
 		free(matrix->matriz);
 	}
 
-	return 1;
+	return 0;
 }
 
 /*
-function comparar_matriz
 Realiza a comparação de duas Matrizes
-
-@return int, Sempre 0
-
-@param **aMatrizA, pointer, Ponteiro que representa a Matriz A
-@param **aMatrizB, pointer, Ponteiro que representa a Matriz B
-@param nLinha, int, Numero de Linhas da Matriz
-@param nColuna, int, Numero de Colunas da Matriz
 */
 int mcomparar (mymatriz *matrixA, mymatriz *matrixB){
 	double time1, time2;
@@ -175,7 +168,8 @@ int mcomparar (mymatriz *matrixA, mymatriz *matrixB){
 	for (int lin=0; lin < matrixA->lin; lin++) {
 	  for (int col=0; col < matrixA->col; col++){
 			if (matrixA->matriz[lin][col] != matrixB->matriz[lin][col]) {
-				printf("O elemento [%d,%d] é diferente nas matrizes analisadas!\n", lin,col);
+				printf("\nO elemento [%d,%d] é diferente nas matrizes analisadas!\n", lin, col);
+				printf("Os valores são %d e %d\n", matrixA->matriz[lin][col], matrixB->matriz[lin][col]);
 				return 1;
 			}
 		}
