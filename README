@@ -1,0 +1,21 @@
+###################################################
+### Disciplina de Programação Paralela Avançada ###
+###################################################
+Revisão: ago/2019
+Linguagem: C
+Versão: v3 (tools, matriz, matriz-operacoes)
+Executáveis: main e gmat
+
+main: código principal de teste das funções
+gmat: gerador de matrizes NxM em arquivo
+
+ARQUIVOS:
+ * README-res: resultado da execução de exemplo (./main mat_a3x4.example mat_b4x3.example);
+ * mat_a3x4.example e mat_b4x3.example: matrizes exemplos A (3x4) e B(4x3);
+ * toolsv3.(c/h): biblioteca de leitura/escrita de matrizes em arquivos;
+ * matriz-operacoesv3.h: headers das funções de operações de matrizes que devem ser implementadas;
+ * matriz-operacoesv3.c: EM BRANCO (deve ser implementado);
+ * matrizv3.h: headers das funções de gerência de matrizes que devem ser implementadas;
+ * matrizv3.c: EM BRANCO (deve ser implementado);
+ * gera_matrizv3.c: fontes do programa de geração de matrizes em arquivo;
+ * main_matrizv3.c: fontes do programa de teste das operações de matrizes;
