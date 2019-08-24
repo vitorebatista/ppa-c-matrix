@@ -3,10 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "matrizv3.h"
+
+// gcc -Wall -g main.c -o main.exe
+// ./test.c -o main.exe
 
 int main(int argc, char *argv[]) {
     mymatriz mat_a;
-
+    
     if (!malocar(&mat_a))
     {
         printf("Error..\n");
