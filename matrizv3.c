@@ -8,19 +8,26 @@
 Realiza a alocação dos espaços de memória
 
 @param matrix, mymatriz, Estrutura
+@obs
+Devido a erros no valgrind foi utilizado calloc ao invés de malloc
+Conditional jump or move depends on uninitialised value(s)
+https://cs50.stackexchange.com/questions/28837/conditional-jump-or-move-depends-on-uninitialized-value
+
 */
 int malocar(mymatriz *matrix) {
     int **newMatrix = NULL;
 
 	printf("\nmalocar =[%d,%d]\n",matrix->lin, matrix->col);
-	newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
+	newMatrix = (int **) calloc(matrix->lin, sizeof(int *));
+	//newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix) {
 		printf("ERROR: Out of memory 1\n");
 		return 1;
 	}
 
   	for (int lin =0; lin < matrix->lin; lin++) {
-			newMatrix[lin] = (int *) malloc(sizeof(int)*matrix->col);
+			newMatrix[lin] = (int *) calloc(matrix->col, sizeof(int));
+			//newMatrix[lin] = (int *) malloc(sizeof(int)*matrix->col);
 			if (!newMatrix) {
 				printf("ERROR: Out of memory 2\n");
 				return 1;
@@ -86,8 +93,6 @@ int mgerar(mymatriz *matrix, int valor){
 Imprime os valores da Matriz
 */
 int mimprimir(mymatriz *matrix){
-    int col=0;
-    int lin=0;
 
 	if ( matrix->matriz == NULL ){
 		printf("\nERRO: Matriz não alocada \n\n");
@@ -95,20 +100,20 @@ int mimprimir(mymatriz *matrix){
 	}
 
 	// Realiza uma impressão de primeira linha com posição das colunas
-	for (col=0; col < matrix->col; col++)
+	for (int col=0; col < matrix->col; col++)
 		printf("\t(%d)", col);
 
 	// Pula linha
 	printf("\n");
 
 	// Percorre as linhas da Matriz
-	for (lin=0; lin < matrix->lin; lin++) {
+	for (int lin=0; lin < matrix->lin; lin++) {
 		// Imprime no começo da linha a posição
 		printf("(%d)", lin);
 		// Percorre as colunas da Matriz
-	  	for (col=0; col < matrix->col; col++){
+	  	for (int col=0; col < matrix->col; col++){
 			// Imprime os valores contidos na Matriz
-			printf("\t%d", matrix->matriz[lin][col]);
+			printf("\t %d", matrix->matriz[lin][col]);
 		}
 		printf("\n");
 	}
