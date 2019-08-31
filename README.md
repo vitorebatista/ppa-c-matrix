@@ -1,5 +1,8 @@
 # PPA - Matriz
 
+## Objetivo
+Implementar funções no arquivo `matrizv3.c` para manipular matrizes de inteiro em C.
+
 ## Como executar
 
 Faça a chamada do comando `make`, gerando o seguinte resultado:
@@ -126,4 +129,5 @@ Os valores são 1 e 3
 ==7609== 
 ==7609== For counts of detected and suppressed errors, rerun with: -v
 ==7609== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
 ```
