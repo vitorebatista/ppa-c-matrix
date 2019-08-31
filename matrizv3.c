@@ -22,7 +22,7 @@ int malocar(mymatriz *matriz) {
 	//newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix) {
 		printf("ERROR: Out of memory 1\n");
-		return 1;
+		return -4;
 	}
 
   	for (int lin =0; lin < matriz->lin; lin++) {
@@ -30,7 +30,7 @@ int malocar(mymatriz *matriz) {
 			//newMatrix[lin] = (int *) malloc(sizeof(int)*matriz->col);
 			if (!newMatrix) {
 				printf("ERROR: Out of memory 2\n");
-				return 1;
+				return -4;
 			}
 	}
     matriz->matriz = newMatrix;
@@ -50,7 +50,7 @@ int mgerar(mymatriz *matriz, int valor){
 	
 	if ( matriz->matriz == NULL ){
 		printf("\nERRO: Matriz não alocada \n\n");
-		exit(1);
+		return -3;
 	}
 
     /* srand(wtime(NULL)) objetiva inicializar o gerador de números aleatórios
@@ -161,18 +161,18 @@ int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
 
 	if ( mat_a->matriz == NULL ){
 		printf("\nERRO: Matriz A não alocada \n\n");
-		exit(1);
+		return -3;
 	}
 
 	if ( mat_b->matriz == NULL ){
 		printf("\nERRO: Matriz B não alocada \n\n");
-		exit(1);
+		return -3;
 	}
 	
 	
 	if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col)) {
 		printf("\nAs matrizes não são do mesmo tamanho\n");
-		return 1;
+		return -2;
 	}
 
 	time1 = wtime();
@@ -181,7 +181,7 @@ int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
 			if (mat_a->matriz[lin][col] != mat_b->matriz[lin][col]) {
 				printf("\nO elemento [%d,%d] é diferente nas matrizes analisadas!\n", lin, col);
 				printf("Os valores são %d e %d\n", mat_a->matriz[lin][col], mat_b->matriz[lin][col]);
-				return 1;
+				return -1;
 			}
 		}
 	}

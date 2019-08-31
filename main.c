@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     mat_a.lin = N;
     mat_a.col = M;
 
-    if (!malocar(&mat_a))
+    if (malocar(&mat_a))
     {
         printf("Error..\n");
     }
