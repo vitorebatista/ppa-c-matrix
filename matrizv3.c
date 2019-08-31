@@ -7,54 +7,54 @@
 /*
 Realiza a alocação dos espaços de memória
 
-@param matrix, mymatriz, Estrutura
+@param matriz, mymatriz, Estrutura
 @obs
 Devido a erros no valgrind foi utilizado calloc ao invés de malloc
 Conditional jump or move depends on uninitialised value(s)
 https://cs50.stackexchange.com/questions/28837/conditional-jump-or-move-depends-on-uninitialized-value
 
 */
-int malocar(mymatriz *matrix) {
+int malocar(mymatriz *matriz) {
     int **newMatrix = NULL;
 
-	printf("\nmalocar =[%d,%d]\n",matrix->lin, matrix->col);
-	newMatrix = (int **) calloc(matrix->lin, sizeof(int *));
+	printf("\nmalocar =[%d,%d]\n",matriz->lin, matriz->col);
+	newMatrix = (int **) calloc(matriz->lin, sizeof(int *));
 	//newMatrix = (int **) malloc(matrix->lin * sizeof(int *));
 	if (!newMatrix) {
 		printf("ERROR: Out of memory 1\n");
 		return 1;
 	}
 
-  	for (int lin =0; lin < matrix->lin; lin++) {
-			newMatrix[lin] = (int *) calloc(matrix->col, sizeof(int));
-			//newMatrix[lin] = (int *) malloc(sizeof(int)*matrix->col);
+  	for (int lin =0; lin < matriz->lin; lin++) {
+			newMatrix[lin] = (int *) calloc(matriz->col, sizeof(int));
+			//newMatrix[lin] = (int *) malloc(sizeof(int)*matriz->col);
 			if (!newMatrix) {
 				printf("ERROR: Out of memory 2\n");
 				return 1;
 			}
 	}
-    matrix->matriz = newMatrix;
+    matriz->matriz = newMatrix;
 	return 0;
 }
 
 /*
 Gera valores dentro de uma matriz já alocada
 
-@param *matrix, struct, Estrutura 
+@param *matriz, struct, Estrutura 
 @param valor, int, Menor ideia do que pode ser este parâmetro
 
 */
-int mgerar(mymatriz *matrix, int valor){
+int mgerar(mymatriz *matriz, int valor){
 	
 	int value = 0;// Controlador de valor
 	
-	if ( matrix->matriz == NULL ){
+	if ( matriz->matriz == NULL ){
 		printf("\nERRO: Matriz não alocada \n\n");
 		exit(1);
 	}
 
-    /* srand(time(NULL)) objetiva inicializar o gerador de números aleatórios
-    com o valor da função time(NULL). Este por sua vez, é calculado
+    /* srand(wtime(NULL)) objetiva inicializar o gerador de números aleatórios
+    com o valor da função wtime(NULL). Este por sua vez, é calculado
     como sendo o total de segundos passados desde 1 de janeiro de 1970
     até a data atual.
     Desta forma, a cada execução o valor da "semente" será diferente.
@@ -63,9 +63,9 @@ int mgerar(mymatriz *matrix, int valor){
 	srand(wtime(NULL));
 
 	// Percorre todas as linhas da matriz
-	for (int lin=0; lin < matrix->lin; lin++) {
+	for (int lin=0; lin < matriz->lin; lin++) {
 		// Percorre todas as Colunas da Matriz
-		for (int col=0; col < matrix->col; col++) {
+		for (int col=0; col < matriz->col; col++) {
 
 			// Verifica o valor passado por parâmetro
 			switch (valor)
@@ -82,7 +82,7 @@ int mgerar(mymatriz *matrix, int valor){
 			}
 			
 			// Atribui o valor a posição da Matriz
-			matrix->matriz[lin][col] = value;
+			matriz->matriz[lin][col] = value;
 		}
 	}
 	return 0;
@@ -92,28 +92,28 @@ int mgerar(mymatriz *matrix, int valor){
 /*
 Imprime os valores da Matriz
 */
-int mimprimir(mymatriz *matrix){
+int mimprimir(mymatriz *matriz){
 
-	if ( matrix->matriz == NULL ){
+	if ( matriz->matriz == NULL ){
 		printf("\nERRO: Matriz não alocada \n\n");
 		exit(1);
 	}
 
 	// Realiza uma impressão de primeira linha com posição das colunas
-	for (int col=0; col < matrix->col; col++)
+	for (int col=0; col < matriz->col; col++)
 		printf("\t(%d)", col);
 
 	// Pula linha
 	printf("\n");
 
 	// Percorre as linhas da Matriz
-	for (int lin=0; lin < matrix->lin; lin++) {
+	for (int lin=0; lin < matriz->lin; lin++) {
 		// Imprime no começo da linha a posição
 		printf("(%d)", lin);
 		// Percorre as colunas da Matriz
-	  	for (int col=0; col < matrix->col; col++){
+	  	for (int col=0; col < matriz->col; col++){
 			// Imprime os valores contidos na Matriz
-			printf("\t %d", matrix->matriz[lin][col]);
+			printf("\t %d", matriz->matriz[lin][col]);
 		}
 		printf("\n");
 	}
@@ -125,29 +125,29 @@ int mimprimir(mymatriz *matrix){
 /*
 Gera valores zerados em uma matriz já alocada
 */
-int mzerar (mymatriz *matrix){
-	if ( matrix->matriz == NULL ){
+int mzerar (mymatriz *matriz){
+	if ( matriz->matriz == NULL ){
 		printf("\nERRO: Matriz não alocada \n\n");
 		exit(1);
 	}
 	// Chama a geração Zerando os valores
-	return mgerar(matrix, 0);
+	return mgerar(matriz, 0);
 }
 
 
 /*
 Imprime os valores da matriz
 */
-int mliberar (mymatriz *matrix) {
+int mliberar (mymatriz *matriz) {
 	
 	// Só necessita liberar Matrizes alocadas
-	if (matrix->matriz) {
+	if (matriz->matriz) {
 		// Libera as posições de cada Linha
-		for (int lin =0; lin < matrix->lin; lin++)
-			free(matrix->matriz[lin]);
+		for (int lin =0; lin < matriz->lin; lin++)
+			free(matriz->matriz[lin]);
 
 		// Libera a Matriz completa
-		free(matrix->matriz);
+		free(matriz->matriz);
 	}
 
 	return 0;
@@ -156,32 +156,38 @@ int mliberar (mymatriz *matrix) {
 /*
 Realiza a comparação de duas Matrizes
 */
-int mcomparar (mymatriz *matrixA, mymatriz *matrixB){
+int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
 	double time1, time2;
 
-	if ( matrixA->matriz == NULL ){
+	if ( mat_a->matriz == NULL ){
 		printf("\nERRO: Matriz A não alocada \n\n");
 		exit(1);
 	}
 
-	if ( matrixB->matriz == NULL ){
+	if ( mat_b->matriz == NULL ){
 		printf("\nERRO: Matriz B não alocada \n\n");
 		exit(1);
 	}
+	
+	
+	if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col)) {
+		printf("\nAs matrizes não são do mesmo tamanho\n");
+		return 1;
+	}
 
 	time1 = wtime();
-	for (int lin=0; lin < matrixA->lin; lin++) {
-	  for (int col=0; col < matrixA->col; col++){
-			if (matrixA->matriz[lin][col] != matrixB->matriz[lin][col]) {
+	for (int lin=0; lin < mat_a->lin; lin++) {
+	  for (int col=0; col < mat_a->col; col++){
+			if (mat_a->matriz[lin][col] != mat_b->matriz[lin][col]) {
 				printf("\nO elemento [%d,%d] é diferente nas matrizes analisadas!\n", lin, col);
-				printf("Os valores são %d e %d\n", matrixA->matriz[lin][col], matrixB->matriz[lin][col]);
+				printf("Os valores são %d e %d\n", mat_a->matriz[lin][col], mat_b->matriz[lin][col]);
 				return 1;
 			}
 		}
 	}
 	time2 = wtime();
-	printf ("VERIFICADO: Matrizes identicas\n");
-	printf ("Runtime: %f\n", time2 - time1);
+	printf ("\nMatrizes são idênticas!! :)\n");
+	printf ("Tempo de processamento: %f\n", time2 - time1);
 	return 0;
 }
 
