@@ -14,7 +14,7 @@ número de linhas e colunas. A matriz resultante terá a mesma configuração.
              - 1 para ji
 */
 mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
-    mymatriz res;
+    mymatriz result;
     int i_max, j_max; //auxiliares para controle de aninhamento
 
     //verifica se foi alocado memória para a matriz
@@ -30,15 +30,15 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     }
 
     //matriz resultado
-	res.matriz = NULL;
-	res.lin = mat_a->lin;
-	res.col = mat_a->col;
+	result.matriz = NULL;
+	result.lin = mat_a->lin;
+	result.col = mat_a->col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(&res)) {
+    if (malocar(&result)) {
 		printf ("ERROR: Out of memory\n");
 	}else{
-        mzerar(&res);
+        mzerar(&result);
     }
 
     //define aninhamento, conforme parametro tipo
@@ -51,27 +51,27 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     
     //realiza a soma dos elementos da matriz a e b
     for (int i = 0; i < i_max; i++){
+        
         for (int j = 0; j < j_max; j++){
-
-            
+            printf("[i] %d ", i );
+            printf("[j] %d ", j );
             if (tipo == 0){ //tipo = 0: ordem de aninhamento ij
-                //printf("[a] %d ", mat_a->matriz[i][j] );
-                //printf("[b] %d ", mat_b->matriz[i][j]);
-                res.matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
-                //printf("[r] %d\n", res.matriz[i][j]);
+                printf("[a] %d ", mat_a->matriz[i][j] );
+                printf("[b] %d ", mat_b->matriz[i][j]);
+                result.matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
+                printf("[r] %d\n", result.matriz[i][j]);
 
             }else{ //tipo = 1: ordem de aninhamento ji
-                //printf("[a] %d ", mat_a->matriz[i][j] );
-                //printf("[b] %d ", mat_b->matriz[i][j]);
-                res.matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
-                //printf("[r] %d\n", res.matriz[i][j]);
+                printf("[a1] %d ", mat_a->matriz[i][j] );
+                printf("[b1] %d ", mat_b->matriz[i][j]);
+                result.matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
+                printf("[r1] %d\n", result.matriz[i][j]);
 
             }
             
         }
     }
-
-    return &res.matriz;
+    return &result;
 }
 
 
@@ -94,9 +94,9 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
 
 */
 mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){    
+    mymatriz result;
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
-    mymatriz res;
-
+    
     //verifica se foi alocado memória para a matriz
     if ( (mat_a == NULL) || (mat_b == NULL)) {
         printf ("** Erro: Memoria Insuficiente **\n");
@@ -110,17 +110,18 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     }
 
     //matriz resultado
-	res->matriz = NULL;
-	res->lin = mat_a->lin;
-	res->col = mat_b->col;
+    
+	result.matriz = NULL;
+	result.lin = mat_a->lin;
+	result.col = mat_b->col;
     
     //realiza a alocação de memória para matriz resultado
-    if (malocar(&res)) {
+    if (malocar(&result)) {
 		printf ("ERROR: Out of memory\n");
 	}else{
-        mzerar(&res);
+        mzerar(&result);
     }
-    printf("lin %d col %d\n", res->lin, res->col);
+    printf("lin %d col %d\n", result.lin, result.col);
     //inicializa variáveis de controle dos for`s
     i_max = mat_a->lin;
     j_max = mat_b->col;
@@ -133,7 +134,6 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     
     switch(tipo){
         case 0: //ijk
-            
             maxA = i_max;
             maxB = j_max;
             maxC = k_max;
@@ -174,13 +174,13 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     for (int a = 0; a < maxA; a++){
         for (int b = 0; b < maxB; b++){
             for (int c = 0; c < maxC; c++){
-                res->matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
-                //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
-                //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
-                //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
+                result.matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
+                printf("a[%d][%d] = %d\n", a, c, mat_a->matriz[a][c] );
+                printf("b[%d][%d] = %d\n", c, b, mat_b->matriz[c][b] );
+                printf("%d x %d = %d (%d)\n", mat_a->matriz[a][c], mat_b->matriz[c][b], mat_a->matriz[a][c] * mat_b->matriz[c][b], result.matriz[a][b]);
             }
         }
     }
-    printf("lin %d col %d\n", res->lin, res->col);
-    return &res;
+    printf("lin %d col %d\n", result.lin, result.col);
+    return &result;
 }
