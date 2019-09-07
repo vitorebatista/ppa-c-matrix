@@ -11,5 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: make
       run: make
-    - name: ./main
+    - name: Execute main function
       run: ./main
+    - name: Second function to test
+      run: ./mainEx01 mat_a3x4.example mat_b4x3.example
