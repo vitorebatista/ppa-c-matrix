@@ -3,9 +3,9 @@
 
 /*
 function msomar
-Realiza operação para duas matrizes.
-As matrizes envolvidas na adição devem ser da mesma ordem, quer dizer, devem ter o mesmo
-número de linhas e colunas. A matriz resultante terá a mesma configuração.
+Realiza a soma de duas matrizes.
+As matrizes devem ter o mesmo número de linhas e colunas, sendo o
+resultado uma nova matriz de mesmo tamanho.
 @return res, ponteiro para a matriz resultante
 @param mat_a, ponteiro para objeto do tipo mymatriz
 @param mat_b, ponteiro para objeto do tipo mymatriz
@@ -14,7 +14,8 @@ número de linhas e colunas. A matriz resultante terá a mesma configuração.
              - 1 para ji
 */
 mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
-    mymatriz result;
+    mymatriz temp;
+    mymatriz *result = malloc(sizeof(mymatriz));
     int i_max, j_max; //auxiliares para controle de aninhamento
 
     //verifica se foi alocado memória para a matriz
@@ -26,19 +27,19 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     //valida se matrizes tem tamanhos compatíveis
     if (mat_a->col != mat_b->col || mat_a->lin != mat_b->lin ){
         printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
-        return -1;
+        return NULL;
     }
 
     //matriz resultado
-	result.matriz = NULL;
-	result.lin = mat_a->lin;
-	result.col = mat_a->col;
+	temp.matriz = NULL;
+	temp.lin = mat_a->lin;
+	temp.col = mat_a->col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(&result)) {
+    if (malocar(&temp)) {
 		printf ("ERROR: Out of memory\n");
 	}else{
-        mzerar(&result);
+        mzerar(&temp);
     }
 
     //define aninhamento, conforme parametro tipo
@@ -53,31 +54,32 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     for (int i = 0; i < i_max; i++){
         
         for (int j = 0; j < j_max; j++){
-            printf("[i] %d ", i );
-            printf("[j] %d ", j );
+            // printf("[i] %d ", i );
+            // printf("[j] %d ", j );
             if (tipo == 0){ //tipo = 0: ordem de aninhamento ij
-                printf("[a] %d ", mat_a->matriz[i][j] );
-                printf("[b] %d ", mat_b->matriz[i][j]);
-                result.matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
-                printf("[r] %d\n", result.matriz[i][j]);
-
+                // printf("[a] %d ", mat_a->matriz[i][j] );
+                // printf("[b] %d ", mat_b->matriz[i][j]);
+                temp.matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
+                // printf("[r] %d\n", result.matriz[i][j]);
             }else{ //tipo = 1: ordem de aninhamento ji
-                printf("[a1] %d ", mat_a->matriz[i][j] );
-                printf("[b1] %d ", mat_b->matriz[i][j]);
-                result.matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
-                printf("[r1] %d\n", result.matriz[i][j]);
-
+                // printf("[a1] %d ", mat_a->matriz[i][j] );
+                // printf("[b1] %d ", mat_b->matriz[i][j]);
+                temp.matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
+                // printf("[r1] %d\n", result.matriz[i][j]);
             }
             
         }
     }
-    return &result;
+    result->matriz = temp.matriz;
+    result->lin = temp.lin;
+    result->col = temp.col;
+    return result;
 }
 
 
 /*
 function mmultiplicar
-Realiza operação para duas matrizes.
+Realiza a multiplicação de duas matrizes.
 As matrizes envolvidas na multiplicação devem seguir a regra: número de colunas da primeira
 matriz deve ser igual ao número de linhas da segunda matriz. A matriz resultante será configurada
 tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4 * 4x3 = 3x3
@@ -94,7 +96,8 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
 
 */
 mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){    
-    mymatriz result;
+    mymatriz temp;
+    mymatriz *result = malloc(sizeof(mymatriz));
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
     
     //verifica se foi alocado memória para a matriz
@@ -110,18 +113,17 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     }
 
     //matriz resultado
-    
-	result.matriz = NULL;
-	result.lin = mat_a->lin;
-	result.col = mat_b->col;
+	temp.matriz = NULL;
+	temp.lin = mat_a->lin;
+	temp.col = mat_b->col;
     
     //realiza a alocação de memória para matriz resultado
-    if (malocar(&result)) {
+    if (malocar(&temp)) {
 		printf ("ERROR: Out of memory\n");
 	}else{
-        mzerar(&result);
+        mzerar(&temp);
     }
-    printf("lin %d col %d\n", result.lin, result.col);
+    printf("lin %d col %d\n", temp.lin, temp.col);
     //inicializa variáveis de controle dos for`s
     i_max = mat_a->lin;
     j_max = mat_b->col;
@@ -174,13 +176,16 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     for (int a = 0; a < maxA; a++){
         for (int b = 0; b < maxB; b++){
             for (int c = 0; c < maxC; c++){
-                result.matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
-                printf("a[%d][%d] = %d\n", a, c, mat_a->matriz[a][c] );
-                printf("b[%d][%d] = %d\n", c, b, mat_b->matriz[c][b] );
-                printf("%d x %d = %d (%d)\n", mat_a->matriz[a][c], mat_b->matriz[c][b], mat_a->matriz[a][c] * mat_b->matriz[c][b], result.matriz[a][b]);
+                temp.matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
+                // printf("a[%d][%d] = %d\n", a, c, mat_a->matriz[a][c] );
+                // printf("b[%d][%d] = %d\n", c, b, mat_b->matriz[c][b] );
+                // printf("%d x %d = %d (%d)\n", mat_a->matriz[a][c], mat_b->matriz[c][b], mat_a->matriz[a][c] * mat_b->matriz[c][b], result.matriz[a][b]);
             }
         }
     }
-    printf("lin %d col %d\n", result.lin, result.col);
-    return &result;
+
+    result->matriz = temp.matriz;
+    result->lin = temp.lin;
+    result->col = temp.col;
+    return result;
 }
