@@ -14,7 +14,6 @@ resultado uma nova matriz de mesmo tamanho.
 */
 mymatriz *msomar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
 {
-    mymatriz temp;
     mymatriz *result = malloc(sizeof(mymatriz));
     int i_max, j_max;
 
@@ -36,18 +35,18 @@ mymatriz *msomar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
         exit(1);
     }
 
-    temp.matriz = NULL;
-    temp.lin = mat_a->lin;
-    temp.col = mat_a->col;
+    result->matriz = NULL;
+    result->col = mat_a->col;
+    result->lin = mat_a->lin;
 
-    if (malocar(&temp))
+    if (malocar(result))
     {
         printf("\nERROR: Erro ao inicializar matriz\n");
         exit(1);
     }
     else
     {
-        mzerar(&temp);
+        mzerar(result);
     }
 
     //define aninhamento, conforme parametro tipo
@@ -66,17 +65,17 @@ mymatriz *msomar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
         {
             if (tipo == 0)
             { //tipo = 0: ordem de aninhamento ij
-                temp.matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
+                result->matriz[i][j] = mat_a->matriz[i][j] + mat_b->matriz[i][j];
             }
             else
             { //tipo = 1: ordem de aninhamento ji
-                temp.matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
+                result->matriz[j][i] = mat_a->matriz[j][i] + mat_b->matriz[j][i];
             }
         }
     }
-    result->matriz = temp.matriz;
-    result->lin = temp.lin;
-    result->col = temp.col;
+    // result->matriz = temp.matriz;
+    // result->lin = temp.lin;
+    // result->col = temp.col;
     return result;
 }
 
@@ -99,7 +98,6 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
 */
 mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
 {
-    mymatriz temp;
     mymatriz *result = malloc(sizeof(mymatriz));
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
 
@@ -122,19 +120,19 @@ mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
     }
 
     //matriz resultado
-    temp.matriz = NULL;
-    temp.lin = mat_a->lin;
-    temp.col = mat_b->col;
+    result->matriz = NULL;
+    result->lin = mat_a->lin;
+    result->col = mat_b->col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(&temp))
+    if (malocar(result))
     {
         printf("\nERROR: Erro ao inicializar matriz\n");
         exit(1);
     }
     else
     {
-        mzerar(&temp);
+        mzerar(result);
     }
 
     i_max = mat_a->lin;
@@ -190,13 +188,10 @@ mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
         {
             for (int c = 0; c < maxC; c++)
             {
-                temp.matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
+                result->matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
             }
         }
     }
 
-    result->matriz = temp.matriz;
-    result->lin = temp.lin;
-    result->col = temp.col;
     return result;
 }
