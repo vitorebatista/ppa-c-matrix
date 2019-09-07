@@ -171,7 +171,7 @@ Realiza a comparação de duas Matrizes
 */
 int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 {
-	double time1, time2;
+	//double time1, time2;
 
 	if (mat_a->matriz == NULL)
 	{
@@ -191,7 +191,7 @@ int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 		return -2;
 	}
 
-	time1 = wtime();
+	//time1 = wtime();
 	for (int lin = 0; lin < mat_a->lin; lin++)
 	{
 		for (int col = 0; col < mat_a->col; col++)
@@ -204,8 +204,8 @@ int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 			}
 		}
 	}
-	time2 = wtime();
-	printf("\nMatrizes são idênticas!! :)\n");
-	printf("Tempo de processamento: %f\n", time2 - time1);
+	//time2 = wtime();
+	printf("Matrizes são idênticas!! :) \n");
+	//printf("Tempo de processamento: %f\n", time2 - time1);
 	return 0;
 }
