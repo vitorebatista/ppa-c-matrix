@@ -209,3 +209,8 @@ int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 	//printf("Tempo de processamento: %f\n", time2 - time1);
 	return 0;
 }
+
+matriz_bloco_t **particionar_matriz (int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
+{
+	return matriz;
+}
