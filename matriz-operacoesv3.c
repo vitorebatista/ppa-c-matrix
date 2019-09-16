@@ -195,3 +195,9 @@ mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
 
     return result;
 }
+
+
+int multiplicar_submatriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
+{
+    return 0;
+}
