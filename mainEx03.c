@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
 
         matriz_bloco_t **Vsubmat_a = NULL;
         matriz_bloco_t **Vsubmat_b = NULL;
+		matriz_bloco_t **Vsubmat_c = NULL;
         int nro_submatrizes=2;
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,13 +93,16 @@ int main(int argc, char *argv[]) {
 	printf("\n ##### multiplicar_t1 de Matrizes #####\n");
 	start_time = wtime();
 
-	Vsubmat_a = particionar_matriz (mat_a, N, La, 1, 2);
-	Vsubmat_b = particionar_matriz (mat_b, Lb, M, 0, 2);
-	Vsubmat_c = csubmatrizv2 (N, M, nro_submatrizes);
+	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
+	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
+	Vsubmat_c = constroi_submatrizv2 (N, M, nro_submatrizes);
 
-	mmsubmatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
-	mmsubmatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
-	msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz,mmultbloco[0], N, N, N);
+	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
+	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
+	//Assim não é possível
+	//msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz,mmultbloco[0], N, N, N);
+	//Assim também não, pois o msomar possui como parâmetros o mymatriz com retorno mymatriz
+	//msomar(Vsubmat_c[0], &Vsubmat_c[1], N); 
 	
 	end_time = wtime();
 	mimprimir(mmultbloco[0]);
@@ -113,7 +117,7 @@ int main(int argc, char *argv[]) {
 	//              Comparação dos resultados
 	printf("\n ##### Comparação dos resultados da Multiplicação de matrizes #####\n");
 	printf("[mult_t0 vs multbloco_t0]\t");
-	mcomparar (mat_mult[0],mmultbloco[0]);
+	mcomparar (mmult[0],mmultbloco[0]);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
