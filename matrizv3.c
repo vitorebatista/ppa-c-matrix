@@ -212,5 +212,10 @@ int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 
 matriz_bloco_t **particionar_matriz (int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
 {
-	return matriz;
+	return 0;
+}
+
+matriz_bloco_t **constroi_submatrizv2 (int mat_lin, int mat_col, int divisor)
+{
+	return 0;
 }
