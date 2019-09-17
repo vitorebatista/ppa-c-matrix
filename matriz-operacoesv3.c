@@ -196,8 +196,17 @@ mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
     return result;
 }
 
-
-int multiplicar_submatriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
+int multiplicar_submatriz (matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
+    // Percorre Linha de A
+    for (int linA = 0; linA < mat_suba[0].mat_lin; linA++)
+        // Percorre Coluna de B
+        for (int colB = 0; colB < mat_subb[0].mat_col; colB++)
+        {
+            mat_subc[0].matriz[linA][colB] = 0; // Zera posição em C
+            // Percorre Coluna A = Linha B
+            for (int linC = 0; linC < mat_suba[0].mat_lin; linC++)
+                mat_subc[0].matriz[linA][colB] += mat_suba[0].matriz[linA][linC] * mat_subb[0].matriz[linC][colB];
+        }
     return 0;
 }
