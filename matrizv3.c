@@ -231,52 +231,52 @@ int gerar_submatriz(int **mat_origem, matriz_bloco_t *submatriz, bloco_t *bloco)
 
 matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
 {
-	matriz_bloco_t **aSubMat = malloc(divisor * sizeof(matriz_bloco_t *));
+	matriz_bloco_t **sub_matriz = malloc(divisor * sizeof(matriz_bloco_t *));
 
 	int nTamLim = orientacao == 1 ? mat_col : mat_lin;
-	int nTamCar = 1;
-	int nResto = 0;
-	int nUseRes = 0;
-	int nLastEnd = 0;
+	int tam_carga = 1;
+	int resto = 0;
+	int use_resto = 0;
+	int resto_final = 0;
 
 	// Define uma Distribuição de Carga Simples
 	// Enquanto o tamanho de cada carga multiplicado pela
 	// quantidade de processamentos for menor que o limite
 	// alimenta a carga
-	while ((nTamCar * divisor) <= nTamLim)
+	while ((tam_carga * divisor) <= nTamLim)
 	{
-		nTamCar += 1;
+		tam_carga += 1;
 	}
 
 	// Retorna ao estado anterior a superação do limite
-	nTamCar -= 1;
+	tam_carga -= 1;
 
 	// Verifica se há "resto" de alocação
-	if (nTamCar * divisor < nTamLim)
+	if (tam_carga * divisor < nTamLim)
 	{
-		nResto = nTamLim - (nTamCar * divisor);
+		resto = nTamLim - (tam_carga * divisor);
 	}
 
 	// Se carga estiver zerada, há mais processamentos que limites
-	if (nTamCar == 0)
+	if (tam_carga == 0)
 	{
 		printf("Há mais processamentos do que submatrizes, favor rever quantidade de processos.\n");
 		exit(1);
 	}
 	else
 	{
-		for (int nSubMat = 0; nSubMat < divisor; nSubMat++)
+		for (int pos_submatriz = 0; pos_submatriz < divisor; pos_submatriz++)
 		{
 
 			// Distribui o resto de carga
-			if (nResto != 0)
+			if (resto != 0)
 			{
-				nUseRes = 1;
-				nResto -= 1;
+				use_resto = 1;
+				resto -= 1;
 			}
 			else
 			{
-				nUseRes = 0;
+				use_resto = 0;
 			}
 
 			bloco_t *blocoX = malloc(sizeof(bloco_t));
@@ -287,28 +287,22 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
 			blocoX->lin_fim = mat_lin;
 			if (orientacao == 1)
 			{
-				blocoX->col_inicio = nLastEnd;
-				blocoX->col_fim = nLastEnd + nTamCar + nUseRes;
+				blocoX->col_inicio = resto_final;
+				blocoX->col_fim = resto_final + tam_carga + use_resto;
 			}
 			else
 			{
-				blocoX->lin_inicio = nLastEnd;
-				blocoX->lin_fim = nLastEnd + nTamCar + nUseRes;
+				blocoX->lin_inicio = resto_final;
+				blocoX->lin_fim = resto_final + tam_carga + use_resto;
 			}
-			nLastEnd += nTamCar + nUseRes;
-			int **matrizX;
-			if (orientacao == 1)
-			{
-				matrizX = alocar_matriz(mat_lin, nTamCar + nUseRes);
-				zerar_matriz(matrizX, mat_lin, nTamCar + nUseRes);
-			}
-			else
-			{
-				matrizX = alocar_matriz(nTamCar + nUseRes, mat_col);
-				zerar_matriz(matrizX, nTamCar + nUseRes, mat_col);
-			}
-
-			gerar_submatriz(matriz, matrizX, blocoX);
+			resto_final += tam_carga + use_resto;
+			//int **matrizX;
+			mymatriz matrizX;
+			matrizX.matriz = NULL;
+			matrizX.lin = orientacao == 1 ? mat_lin : tam_carga + use_resto;
+			matrizX.col = orientacao == 1 ? tam_carga + use_resto : mat_col;
+			malocar(&matrizX);
+			mzerar(&matrizX);
 
 			// Gera o Bloco correto
 			blocoX->col_inicio = 0;
@@ -317,23 +311,47 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
 			blocoX->lin_fim = mat_lin;
 			if (orientacao == 1)
 			{
-				blocoX->col_fim = nTamCar + nUseRes;
+				blocoX->col_fim = tam_carga + use_resto;
 			}
 			else
 			{
-				blocoX->lin_fim = nTamCar + nUseRes;
+				blocoX->lin_fim = tam_carga + use_resto;
 			}
 
-			aSubMat[nSubMat] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
-			aSubMat[nSubMat]->bloco = blocoX;
-			aSubMat[nSubMat]->matriz = matrizX;
+			sub_matriz[pos_submatriz] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+			sub_matriz[pos_submatriz]->bloco = blocoX;
+			sub_matriz[pos_submatriz]->matriz = matrizX.matriz;
+			mliberar(&matrizX);
 		}
 	}
 
-	return aSubMat;
+	return sub_matriz;
 }
 
 matriz_bloco_t **constroi_submatrizv2(int mat_lin, int mat_col, int divisor)
 {
-	return 0;
+	matriz_bloco_t **sub_matriz = malloc(divisor * sizeof(matriz_bloco_t *));
+
+	for (int pos_submatriz = 0; pos_submatriz < divisor; pos_submatriz++)
+	{
+		bloco_t *blocoX = malloc(sizeof(bloco_t));
+		blocoX->col_inicio = 0;
+		blocoX->col_fim = mat_col;
+		blocoX->lin_inicio = 0;
+		blocoX->lin_fim = mat_lin;
+
+		mymatriz matrizX;
+		matrizX.matriz = NULL;
+		matrizX.lin = mat_lin;
+		matrizX.col = mat_col;
+		malocar(&matrizX);
+		mzerar(&matrizX);
+
+		sub_matriz[pos_submatriz] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+		sub_matriz[pos_submatriz]->bloco = blocoX;
+		sub_matriz[pos_submatriz]->matriz = matrizX.matriz;
+		mliberar(&matrizX);
+	}
+
+	return sub_matriz;
 }
