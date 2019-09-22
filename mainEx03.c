@@ -99,11 +99,7 @@ int main(int argc, char *argv[]) {
 
 	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
 	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
-	//Assim não é possível
-	//msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz,mmultbloco[0], N, N, N);
-	//Assim também não, pois o msomar possui como parâmetros o mymatriz com retorno mymatriz
-	//msomar(Vsubmat_c[0], &Vsubmat_c[1], N); 
-	//mmultbloco[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
+	mmultbloco[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
 
 	end_time = wtime();
 	mimprimir(mmultbloco[0]);
