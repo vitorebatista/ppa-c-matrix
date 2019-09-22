@@ -196,184 +196,108 @@ mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
     return result;
 }
 
-int multiplicar_submatriz (matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
+int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
-    printf("Entrou multiplicar_submatriz");
-    // Percorre Linha de A
-    for (int linA = 0; linA < mat_suba[0].mat_lin; linA++)
-        // Percorre Coluna de B
-        for (int colB = 0; colB < mat_subb[0].mat_col; colB++)
+
+    if (!mat_suba || !mat_subb || !mat_subc)
+    {
+        printf("ERROR: Out of memory\n");
+        exit (1);
+    }
+
+    int i, j, k;
+    for (i = mat_suba->bloco->lin_inicio; i < mat_suba->bloco->lin_fim; i++)
+    {
+        for (k = mat_suba->bloco->col_inicio; k < mat_suba->bloco->col_fim; k++)
         {
-            mat_subc[0].matriz[linA][colB] = 0; // Zera posição em C
-            // Percorre Coluna A = Linha B
-            for (int linC = 0; linC < mat_suba[0].mat_lin; linC++)
-                mat_subc[0].matriz[linA][colB] += mat_suba[0].matriz[linA][linC] * mat_subb[0].matriz[linC][colB];
+            for (j = mat_subb->bloco->col_inicio; j < mat_subb->bloco->col_fim; j++)
+            {
+                mat_subc->matriz->matriz[i][j] += mat_suba->matriz->matriz[i][k] * mat_subb->matriz->matriz[k][j];
+            }
         }
+    }
     return 0;
 }
 
-
-// int gerar_submatriz(int **mat_origem, matriz_bloco_t *submatriz, bloco_t *bloco)
-// {
-
-// 	int posCol = 0;
-// 	int posLin = 0;
-
-// 	for (int lin = bloco->lin_inicio; lin < bloco->lin_fim; lin++)
-// 	{
-// 		for (int col = bloco->col_inicio; col < bloco->col_fim; col++)
-// 		{
-// 			submatriz[0].matriz[posLin][posCol] = mat_origem[lin][col];
-// 			posCol += 1;
-// 		}
-// 		posLin += 1;
-// 		posCol = 0;
-// 	}
-// 	return 0;
-// }
-
 matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
 {
-	matriz_bloco_t **sub_matriz = malloc(divisor * sizeof(matriz_bloco_t *));
+    matriz_bloco_t **matriz_bloco = NULL;
+    matriz_bloco = (matriz_bloco_t **)calloc(divisor, sizeof(matriz_bloco_t *));
 
-	int tam_limite = orientacao == 1 ? mat_col : mat_lin;
-	int tam_carga = 1;
-	int resto = 0;
-	int use_resto = 0;
-	int resto_final = 0;
+    if (!matriz_bloco || !matriz)
+    {
+        printf("ERROR: Out of memory\n");
+        exit (1);
+    }
 
-	// Define uma Distribuição de Carga Simples
-	// Enquanto o tamanho de cada carga multiplicado pela
-	// quantidade de processamentos for menor que o limite
-	// alimenta a carga
-	while ((tam_carga * divisor) <= tam_limite)
-	{
-		tam_carga += 1;
-	}
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+        matriz_bloco[i]->bloco = (bloco_t *)malloc(sizeof(bloco_t));
+    }
 
-	// Retorna ao estado anterior a superação do limite
-	tam_carga -= 1;
+    mymatriz *main_matriz = (mymatriz *)malloc(sizeof(mymatriz));
+    main_matriz->matriz = matriz;
 
-	// Verifica se há "resto" de alocação
-	if (tam_carga * divisor < tam_limite)
-	{
-		resto = tam_limite - (tam_carga * divisor);
-	}
-
-	// Se carga estiver zerada, há mais processamentos que limites
-	if (tam_carga == 0)
-	{
-		printf("Há mais processamentos do que submatrizes, favor rever quantidade de processos.\n");
-		exit(1);
-	}
-	else
-	{
-		for (int pos_submatriz = 0; pos_submatriz < divisor; pos_submatriz++)
-		{
-
-			// Distribui o resto de carga
-			if (resto != 0)
-			{
-				use_resto = 1;
-				resto -= 1;
-			}
-			else
-			{
-				use_resto = 0;
-			}
-
-			bloco_t *blocoX = malloc(sizeof(bloco_t));
-			if(blocoX == NULL){
-				printf ("ERROR: Out of memory\n");
-				exit(0);
-			}
-			// Gera o Bloco para busca da SubMatriz
-			blocoX->col_inicio = 0;
-			blocoX->col_fim = mat_col;
-			blocoX->lin_inicio = 0;
-			blocoX->lin_fim = mat_lin;
-			if (orientacao == 1)
-			{
-				blocoX->col_inicio = resto_final;
-				blocoX->col_fim = resto_final + tam_carga + use_resto;
-			}
-			else
-			{
-				blocoX->lin_inicio = resto_final;
-				blocoX->lin_fim = resto_final + tam_carga + use_resto;
-			}
-			resto_final += tam_carga + use_resto;
-			//int **matrizX;
-			mymatriz matrizX;
-			matrizX.matriz = NULL;
-			matrizX.lin = orientacao == 1 ? mat_lin : tam_carga + use_resto;
-			matrizX.col = orientacao == 1 ? tam_carga + use_resto : mat_col;
-			
-			if (malocar(&matrizX))
-			{
-				printf ("ERROR: Out of memory\n");
-				exit(0);
-			}
-			mzerar(&matrizX);
-			
-			// Gera o Bloco correto
-			blocoX->col_inicio = 0;
-			blocoX->col_fim = mat_col;
-			blocoX->lin_inicio = 0;
-			blocoX->lin_fim = mat_lin;
-			if (orientacao == 1)
-			{
-				blocoX->col_fim = tam_carga + use_resto;
-			}
-			else
-			{
-				blocoX->lin_fim = tam_carga + use_resto;
-			}
-			
-			sub_matriz[pos_submatriz] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
-			sub_matriz[pos_submatriz]->bloco = blocoX;
-			sub_matriz[pos_submatriz]->matriz = matrizX.matriz;
-			printf ("GEROU mymatriz matrizX\n");
-			mliberar(&matrizX);
-		}
-	}
-
-	return sub_matriz;
+    if (orientacao == 0)
+    {
+        int lin_div = mat_lin / divisor;
+        for (int i = 0; i < divisor; i++)
+        {
+            matriz_bloco[i]->matriz = main_matriz;
+            matriz_bloco[i]->bloco->lin_inicio = i * lin_div;
+            matriz_bloco[i]->bloco->lin_fim = (i + 1) * lin_div;
+            matriz_bloco[i]->bloco->col_inicio = 0;
+            matriz_bloco[i]->bloco->col_fim = mat_col;
+        }
+        matriz_bloco[divisor - 1]->bloco->lin_fim = mat_lin;
+    }
+    else
+    {
+        int lin_div = mat_col / divisor;
+        for (int i = 0; i < divisor; i++)
+        {
+            matriz_bloco[i]->matriz = main_matriz;
+            matriz_bloco[i]->bloco->lin_inicio = 0;
+            matriz_bloco[i]->bloco->lin_fim = mat_lin;
+            matriz_bloco[i]->bloco->col_inicio = i * lin_div;
+            matriz_bloco[i]->bloco->col_fim = (i + 1) * lin_div;
+        }
+        matriz_bloco[divisor - 1]->bloco->col_fim = mat_col;
+    }
+    return matriz_bloco;
 }
 
 matriz_bloco_t **csubmatrizv2(int mat_lin, int mat_col, int divisor)
 {
-	matriz_bloco_t **sub_matriz = malloc(divisor * sizeof(matriz_bloco_t *));
+    matriz_bloco_t **matriz_bloco = NULL;
+    matriz_bloco = (matriz_bloco_t **)calloc(divisor, sizeof(matriz_bloco_t *));
 
-	for (int pos_submatriz = 0; pos_submatriz < divisor; pos_submatriz++)
-	{
-		bloco_t *blocoX = malloc(sizeof(bloco_t));
-		if (blocoX == NULL)
-		{
-			printf ("ERROR: Out of memory\n");
-			exit(0);
-		}
-		blocoX->col_inicio = 0;
-		blocoX->col_fim = mat_col;
-		blocoX->lin_inicio = 0;
-		blocoX->lin_fim = mat_lin;
+    if (!matriz_bloco)
+    {
+        printf("ERROR: Out of memory\n");
+        exit (1);
+    }
 
-		mymatriz matrizX;
-		matrizX.matriz = NULL;
-		matrizX.lin = mat_lin;
-		matrizX.col = mat_col;
-		if (malocar(&matrizX))
-		{
-			printf ("ERROR: Out of memory\n");
-			exit(0);
-		}
-		mzerar(&matrizX);
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+        matriz_bloco[i]->bloco = (bloco_t *)malloc(sizeof(bloco_t));
+    }
 
-		sub_matriz[pos_submatriz] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
-		sub_matriz[pos_submatriz]->bloco = blocoX;
-		sub_matriz[pos_submatriz]->matriz = matrizX.matriz;
-		mliberar(&matrizX);
-	}
+    mymatriz *matriz_bloco_2 = (mymatriz *)malloc(sizeof(mymatriz));
+    matriz_bloco_2->lin = mat_lin;
+    matriz_bloco_2->col = mat_col;
 
-	return sub_matriz;
+    malocar(matriz_bloco_2);
+    mzerar(matriz_bloco_2);
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i]->matriz = matriz_bloco_2;
+        matriz_bloco[i]->bloco->lin_inicio = 0;
+        matriz_bloco[i]->bloco->lin_fim = mat_lin;
+        matriz_bloco[i]->bloco->col_inicio = 0;
+        matriz_bloco[i]->bloco->col_fim = mat_col;
+    }
+    return matriz_bloco;
 }
