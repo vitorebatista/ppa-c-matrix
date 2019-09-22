@@ -5,24 +5,24 @@
 #ifndef SOME_HEADER_FILE_H
 #define SOME_HEADER_FILE_H
 typedef struct {
-  int lin_inicio;
-  int lin_fim;
-  int col_inicio;
-  int col_fim;
+    int lin_inicio;
+    int lin_fim;
+    int col_inicio;
+    int col_fim;
 } bloco_t;
 
 typedef struct {
-  int **matriz;
-  bloco_t *bloco;
-  int mat_col;
-  int mat_lin;
-  int divisor;
+    mymatriz *matriz; //Corrigido, estava int **matriz;
+    bloco_t *bloco;
+    int mat_col;
+    int mat_lin;
+    int divisor;
 } matriz_bloco_t;
 
 typedef struct {
-  int **matriz;
-  int lin;
-  int col;
+    int **matriz;
+    int lin;
+    int col;
 } mymatriz;
 #endif
 
@@ -42,3 +42,4 @@ int mcomparar (mymatriz *mat_a, mymatriz *mat_b);
 //int imprimir_bloco (matriz_bloco_t *submatriz);
 //matriz_bloco_t **constroi_submatriz (int **matriz, int mat_lin, int mat_col, int divisor);
 //matriz_bloco_t **csubmatrizv2 (int mat_lin, int mat_col, int divisor);
+
