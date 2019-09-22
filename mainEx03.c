@@ -19,10 +19,10 @@ int main(int argc, char *argv[]) {
 	int N, M, La, Lb;
 	double start_time, end_time;
 
-        matriz_bloco_t **Vsubmat_a = NULL;
-        matriz_bloco_t **Vsubmat_b = NULL;
-		matriz_bloco_t **Vsubmat_c = NULL;
-        int nro_submatrizes=2;
+	matriz_bloco_t **Vsubmat_a = NULL;
+	matriz_bloco_t **Vsubmat_b = NULL;
+	matriz_bloco_t **Vsubmat_c = NULL;
+	int nro_submatrizes=2;
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	printf("\n%%%%%%%%%%%%%%%%\n");
-	
+
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//               Operações de Multiplicação
 	mmult = (mymatriz **) malloc (sizeof(mymatriz *));
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 
 	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
 	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
-	Vsubmat_c = constroi_submatrizv2 (N, M, nro_submatrizes);
+	Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
 
 	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
 	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
@@ -103,7 +103,8 @@ int main(int argc, char *argv[]) {
 	//msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz,mmultbloco[0], N, N, N);
 	//Assim também não, pois o msomar possui como parâmetros o mymatriz com retorno mymatriz
 	//msomar(Vsubmat_c[0], &Vsubmat_c[1], N); 
-	
+	//mmultbloco[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
+
 	end_time = wtime();
 	mimprimir(mmultbloco[0]);
 	printf("\tRuntime: %f\n", end_time - start_time);
