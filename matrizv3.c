@@ -188,7 +188,7 @@ int mcomparar(mymatriz *mat_a, mymatriz *mat_b)
 	if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col))
 	{
 		printf("\nAs matrizes não são do mesmo tamanho\n");
-		return -2;
+		//return -2;
 	}
 
 	//time1 = wtime();

@@ -96,106 +96,109 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
              - 5 para jki
 
 */
-mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
-{
-    mymatriz *result = malloc(sizeof(mymatriz));
+mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
+    mymatriz *res = malloc(sizeof(mymatriz));
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
-    //printf("\nENTROU NO mmultiplicar \n\n");
-    if (mat_a->matriz == NULL)
-    {
-        printf("\nERRO: Matriz A não alocada \n\n");
-        exit(1);
+
+    //verifica se foi alocado memória para a matriz
+    if ( (mat_a == NULL) || (mat_b == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
     }
 
-    if (mat_b->matriz == NULL)
-    {
-        printf("\nERRO: Matriz B não alocada \n\n");
-        exit(1);
-    }
-
-    if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col))
-    {
-        printf("\nERRO: As matrizes não são do mesmo tamanho\n");
-        exit(1);
+    //valida se matrizes tem tamanhos compatíveis
+    if (mat_a->col != mat_b->lin ){
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa multiplicar. **\n");
+        return NULL;
     }
 
     //matriz resultado
-    result->matriz = NULL;
-    result->lin = mat_a->lin;
-    result->col = mat_b->col;
+	res->matriz = NULL;
+	res->lin = mat_a->lin;
+	res->col = mat_b->col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(result))
-    {
-        printf("\nERROR: Erro ao inicializar matriz\n");
-        exit(1);
-    }
-    else
-    {
-        mzerar(result);
+    if (malocar(res)) {
+		printf ("ERROR: Out of memory\n");
+	        exit(1);
+	}else{
+        mzerar(res);
     }
 
+    //inicializa variáveis de controle dos for`s
     i_max = mat_a->lin;
     j_max = mat_b->col;
-    k_max = mat_a->col;
+    k_max = mat_a->col; //ou mat_b->lin
 
-    int maxA = 0;
-    int maxB = 0;
-    int maxC = 0;
-
-    switch (tipo)
-    {
-    case 0: //ijk
-        maxA = i_max;
-        maxB = j_max;
-        maxC = k_max;
-        break;
-
-    case 1: //ikj
-        maxA = i_max;
-        maxB = k_max;
-        maxC = j_max;
-        break;
-
-    case 2: //kij
-        maxA = k_max;
-        maxB = i_max;
-        maxC = j_max;
-        break;
-
-    case 3: //kji
-        maxA = k_max;
-        maxB = j_max;
-        maxC = i_max;
-        break;
-
-    case 4: //jik
-        maxA = j_max;
-        maxB = i_max;
-        maxC = k_max;
-        break;
-
-    default: //jki
-        maxA = j_max;
-        maxB = k_max;
-        maxC = i_max;
-        break;
-    }
-
-    for (int a = 0; a < maxA; a++)
-    {
-        for (int b = 0; b < maxB; b++)
-        {
-            for (int c = 0; c < maxC; c++)
-            {
-                result->matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
+    //define aninhamento, conforme parametro tipo
+    switch(tipo){
+        case 0: //ijk
+            for (int i = 0; i < i_max; i++){
+                for (int j = 0; j < j_max; j++){
+                    for (int k = 0; k < k_max; k++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                        //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
+                        //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
+                        //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
+                    }
+                }
             }
-        }
+            break;
+
+        case 1: //ikj
+            for (int i = 0; i < i_max; i++){
+                for (int k = 0; k < k_max; k++){
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+
+        case 2: //kij
+            for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+
+        case 3: //kji
+            for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){        
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+
+        case 4: //jik
+            for (int j = 0; j < j_max; j++){
+                for (int i = 0; i < i_max; i++){
+                    for (int k = 0; k < k_max; k++){            
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+
+        default: //jki
+            for (int j = 0; j < j_max; j++){
+                for (int k = 0; k < k_max; k++){
+                    for (int i = 0; i < i_max; i++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+            
     }
 
-    return result;
+    return res;
 }
-
 int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
 
