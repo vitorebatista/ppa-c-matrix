@@ -11,13 +11,19 @@ int main(int argc, char *argv[]) {
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	// DECLARAÇÃO de VARIÁVEIS
 	mymatriz mat_a, mat_b;
-	mymatriz **mat_soma, **mat_mult;
+	mymatriz **mmultbloco, **mmult;
 	char filename[100];
 	FILE *fmat;
 	int nr_line;
 	int *vet_line = NULL;
 	int N, M, La, Lb;
 	double start_time, end_time;
+
+	matriz_bloco_t **Vsubmat_a = NULL;
+	matriz_bloco_t **Vsubmat_b = NULL;
+	matriz_bloco_t **Vsubmat_c = NULL;
+	int nro_submatrizes=2;
+
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	if (argc != 3){
@@ -64,71 +70,64 @@ int main(int argc, char *argv[]) {
 	fclose(fmat);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
-	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-	//                 Operações de Adição
-	mat_soma = (mymatriz **) calloc (2,sizeof(mymatriz *));
-	for (int ii=0; ii < 2; ii++) {
-		printf("\n ##### somar_t%d de Matrizes #####\n", ii);
-		start_time = wtime();
-		mat_soma[ii] = msomar(&mat_a, &mat_a, ii);
-		end_time = wtime();
-		mimprimir(mat_soma[ii]);
-		printf("\tRuntime: %f\n", end_time - start_time);
-		sprintf(filename, "soma_t%d.result", ii);
-		fmat = fopen(filename,"w");
-		fileout_matriz(mat_soma[ii], fmat);
-		fclose(fmat);
-	}
-	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
-
 	printf("\n%%%%%%%%%%%%%%%%\n");
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//               Operações de Multiplicação
-	mat_mult = (mymatriz **) malloc (sizeof(mymatriz *)*6);
-	for (int ii=0; ii < 6; ii++) {
-		printf("\n ##### multiplicar_t%d de Matrizes #####\n", ii);
-		start_time = wtime();
-		mat_mult[ii] = mmultiplicar(&mat_a, &mat_b, ii);
-		end_time = wtime();
-		mimprimir(mat_mult[ii]);
-		printf("\tRuntime: %f\n", end_time - start_time);
-		sprintf(filename, "mult_t%d.result", ii);
-		fmat = fopen(filename,"w");
-		fileout_matriz(mat_mult[ii], fmat);
-		fclose(fmat);
-	}
+	mmult = (mymatriz **) malloc (sizeof(mymatriz *));
+	printf("\n ##### multiplicar_t1 de Matrizes #####\n");
+	start_time = wtime();
+	mmult[0] = mmultiplicar(&mat_a, &mat_b, 1);
+	end_time = wtime();
+	mimprimir(mmult[0]);
+	printf("\tRuntime: %f\n", end_time - start_time);
+	sprintf(filename, "mult_t1.result");
+	fmat = fopen(filename,"w");
+	fileout_matriz(mmult[0], fmat);
+	fclose(fmat);
+	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
+
+	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
+	//               Operações de Multiplicação (em bloco)
+	mmultbloco = (mymatriz **) malloc (sizeof(mymatriz *));
+	printf("\n ##### multiplicar_t1 de Matrizes #####\n");
+	start_time = wtime();
+
+	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
+	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
+	Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
+
+	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
+	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
+	mmultbloco[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
+
+	end_time = wtime();
+	mimprimir(mmultbloco[0]);
+	printf("\tRuntime: %f\n", end_time - start_time);
+	sprintf(filename, "mult_t1.result");
+	fmat = fopen(filename,"w");
+	fileout_matriz(mmultbloco[0], fmat);
+	fclose(fmat);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//              Comparação dos resultados
-	printf("\n ##### Comparação dos resultados da adição de matrizes #####\n");
-	printf("[soma_t0 vs soma_t1]\t");
-	mcomparar (mat_soma[0],mat_soma[1]);
-
 	printf("\n ##### Comparação dos resultados da Multiplicação de matrizes #####\n");
-	for (int i=1; i<6; i++) {
-		printf("[mult_t0 vs mult_t%d]\t", i);
-		mcomparar (mat_mult[0],mat_mult[i]);
-	}
+	printf("[mult_t0 vs multbloco_t0]\t");
+	mcomparar (mmult[0],mmultbloco[0]);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//                   Liberação de memória
-	for (int ii=0; ii < 2; ii++) {
-		mliberar(mat_soma[ii]);
-		free (mat_soma[ii]);
-	}
-
-	for (int ii=0; ii < 6; ii++) {
-		mliberar(mat_mult[ii]);
-		free (mat_mult[ii]);
-	}
+	mliberar(mmult[0]);
+	free (mmult[0]);
+	mliberar(mmultbloco[0]);
+	free (mmultbloco[0]);
 
 	mliberar(&mat_a);
 	mliberar(&mat_b);
-	free(mat_soma);
-	free(mat_mult);
+	free(mmult);
+	free(mmultbloco);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	return 0;

@@ -96,102 +96,228 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
              - 5 para jki
 
 */
-mymatriz *mmultiplicar(mymatriz *mat_a, mymatriz *mat_b, int tipo)
-{
-    mymatriz *result = malloc(sizeof(mymatriz));
+mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
+    mymatriz *res = malloc(sizeof(mymatriz));
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
 
-    if (mat_a->matriz == NULL)
-    {
-        printf("\nERRO: Matriz A não alocada \n\n");
-        exit(1);
+    //verifica se foi alocado memória para a matriz
+    if ( (mat_a == NULL) || (mat_b == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
     }
 
-    if (mat_b->matriz == NULL)
-    {
-        printf("\nERRO: Matriz B não alocada \n\n");
-        exit(1);
-    }
-
-    if ((mat_a->lin != mat_b->lin) || (mat_a->col != mat_b->col))
-    {
-        printf("\nERRO: As matrizes não são do mesmo tamanho\n");
-        exit(1);
+    //valida se matrizes tem tamanhos compatíveis
+    if (mat_a->col != mat_b->lin ){
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa multiplicar. **\n");
+        return NULL;
     }
 
     //matriz resultado
-    result->matriz = NULL;
-    result->lin = mat_a->lin;
-    result->col = mat_b->col;
+	res->matriz = NULL;
+	res->lin = mat_a->lin;
+	res->col = mat_b->col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(result))
-    {
-        printf("\nERROR: Erro ao inicializar matriz\n");
-        exit(1);
-    }
-    else
-    {
-        mzerar(result);
+    if (malocar(res)) {
+		printf ("ERROR: Out of memory\n");
+	        exit(1);
+	}else{
+        mzerar(res);
     }
 
+    //inicializa variáveis de controle dos for`s
     i_max = mat_a->lin;
     j_max = mat_b->col;
-    k_max = mat_a->col;
+    k_max = mat_a->col; //ou mat_b->lin
 
-    int maxA = 0;
-    int maxB = 0;
-    int maxC = 0;
+    //define aninhamento, conforme parametro tipo
+    switch(tipo){
+        case 0: //ijk
+            for (int i = 0; i < i_max; i++){
+                for (int j = 0; j < j_max; j++){
+                    for (int k = 0; k < k_max; k++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                        //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
+                        //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
+                        //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
+                    }
+                }
+            }
+            break;
 
-    switch (tipo)
-    {
-    case 0: //ijk
-        maxA = i_max;
-        maxB = j_max;
-        maxC = k_max;
-        break;
+        case 1: //ikj
+            for (int i = 0; i < i_max; i++){
+                for (int k = 0; k < k_max; k++){
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
 
-    case 1: //ikj
-        maxA = i_max;
-        maxB = k_max;
-        maxC = j_max;
-        break;
+        case 2: //kij
+            for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
 
-    case 2: //kij
-        maxA = k_max;
-        maxB = i_max;
-        maxC = j_max;
-        break;
+        case 3: //kji
+            for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){        
+                    for (int j = 0; j < j_max; j++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
 
-    case 3: //kji
-        maxA = k_max;
-        maxB = j_max;
-        maxC = i_max;
-        break;
+        case 4: //jik
+            for (int j = 0; j < j_max; j++){
+                for (int i = 0; i < i_max; i++){
+                    for (int k = 0; k < k_max; k++){            
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
 
-    case 4: //jik
-        maxA = j_max;
-        maxB = i_max;
-        maxC = k_max;
-        break;
-
-    default: //jki
-        maxA = j_max;
-        maxB = k_max;
-        maxC = i_max;
-        break;
+        default: //jki
+            for (int j = 0; j < j_max; j++){
+                for (int k = 0; k < k_max; k++){
+                    for (int i = 0; i < i_max; i++){
+                        res->matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }
+            break;
+            
     }
 
-    for (int a = 0; a < maxA; a++)
+    return res;
+}
+int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
+{
+
+    //verifica se foi alocado memória para as matrizes
+    if ( (mat_suba == NULL) || (mat_subb == NULL) || (mat_subc == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return (-1);
+    }
+
+    for (int i = mat_suba->bloco->lin_inicio; i < mat_suba->bloco->lin_fim; i++)
     {
-        for (int b = 0; b < maxB; b++)
+        for (int j = mat_subb->bloco->col_inicio; j < mat_subb->bloco->col_fim; j++)
         {
-            for (int c = 0; c < maxC; c++)
+            for (int k = mat_suba->bloco->col_inicio; k < mat_suba->bloco->col_fim; k++)
             {
-                result->matriz[a][b] += mat_a->matriz[a][c] * mat_b->matriz[c][b];
+                mat_subc->matriz->matriz[i][j] += mat_suba->matriz->matriz[i][k] * mat_subb->matriz->matriz[k][j];
             }
         }
     }
 
-    return result;
+    return 0;
+}
+
+matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int orientacao, int divisor)
+{
+    matriz_bloco_t **matriz_bloco = NULL;
+    matriz_bloco = (matriz_bloco_t **)calloc(divisor, sizeof(matriz_bloco_t *));
+
+    //verifica se foi alocado memória para a matriz
+    if ( (matriz == NULL) || (matriz_bloco == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
+    }
+
+    //verificar se divisor tem valor válido
+    if (orientacao == 0 && (divisor > mat_lin)){
+        printf ("** Erro: Divisor (%d) maior que o número de linhas (%d) **\n", divisor, mat_lin);
+        return NULL;
+    }else{
+        if (orientacao == 1 && (divisor > mat_col)){
+            printf("** Erro: Divisor (%d) maior que o número de colunas (%d) **\n", divisor, mat_col);
+            return NULL;
+        }
+    }
+
+    //aloca memória para cada subdivisao da matriz original
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+        matriz_bloco[i]->bloco = (bloco_t *)malloc(sizeof(bloco_t));
+    }
+
+    //aloca espaço para matriz (mymatriz)
+    mymatriz *new_matriz = (mymatriz *)malloc(sizeof(mymatriz));
+    new_matriz->matriz = matriz;
+    new_matriz->lin = mat_lin;
+    new_matriz->col = mat_col;
+
+    if (orientacao == 0)
+    {
+        int lin_div = mat_lin / divisor; //tamanho do bloco (linhas)
+
+        for (int i = 0; i < divisor; i++)
+        {
+            matriz_bloco[i]->matriz = new_matriz;
+            matriz_bloco[i]->bloco->lin_inicio = (lin_div * i); 
+            matriz_bloco[i]->bloco->lin_fim = (i + 1) * lin_div;
+            matriz_bloco[i]->bloco->col_inicio = 0;
+            matriz_bloco[i]->bloco->col_fim = mat_col;
+        }
+        //ajusta último bloco para abranger as linhas restantes
+        matriz_bloco[divisor - 1]->bloco->lin_fim = mat_lin;
+    }
+    else
+    {
+        int lin_div = mat_col / divisor; //tamanho do bloco (colunas)
+        for (int i = 0; i < divisor; i++)
+        {
+            matriz_bloco[i]->matriz = new_matriz;
+            matriz_bloco[i]->bloco->lin_inicio = 0;
+            matriz_bloco[i]->bloco->lin_fim = mat_lin;
+            matriz_bloco[i]->bloco->col_inicio = i * lin_div;
+            matriz_bloco[i]->bloco->col_fim = (i + 1) * lin_div;
+        }
+
+        //ajusta último bloco para abranger as colunas restantes
+        matriz_bloco[divisor - 1]->bloco->col_fim = mat_col;
+    }
+    return matriz_bloco;
+}
+
+matriz_bloco_t **csubmatrizv2(int mat_lin, int mat_col, int divisor)
+{
+    matriz_bloco_t **matriz_bloco = NULL;
+    matriz_bloco = (matriz_bloco_t **)calloc(divisor, sizeof(matriz_bloco_t *));
+
+    if (!matriz_bloco)
+    {
+        printf("ERROR: Out of memory\n");
+        exit (1);
+    }
+
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i] = (matriz_bloco_t *)malloc(sizeof(matriz_bloco_t));
+        matriz_bloco[i]->bloco = (bloco_t *)malloc(sizeof(bloco_t));
+        matriz_bloco[i]->matriz = (mymatriz *) malloc(sizeof(mymatriz));
+        matriz_bloco[i]->matriz->lin = mat_lin;
+        matriz_bloco[i]->matriz->col = mat_col;
+        malocar(matriz_bloco[i]->matriz);
+        mzerar(matriz_bloco[i]->matriz);
+    }
+
+    for (int i = 0; i < divisor; i++)
+    {
+        matriz_bloco[i]->bloco->lin_inicio = 0;
+        matriz_bloco[i]->bloco->lin_fim = mat_lin;
+        matriz_bloco[i]->bloco->col_inicio = 0;
+        matriz_bloco[i]->bloco->col_fim = mat_col;
+    }
+    return matriz_bloco;
 }
